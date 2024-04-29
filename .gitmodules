@@ -1,9 +1,9 @@
 [submodule "src/opensbi"]
 	path = src/opensbi
-	url = https://github.com/riscv-software-src/opensbi.git
+	url = https://github.com/PennixRv/opensbi.git
 [submodule "src/qemu"]
 	path = src/qemu
-	url = https://github.com/qemu/qemu.git
+	url = https://github.com/PennixRv/qemu.git
 [submodule "src/u-boot"]
 	path = src/u-boot
 	url = https://github.com/PennixRv/u-boot.git
@@ -12,7 +12,7 @@
 	url = https://github.com/PennixRv/linux.git
 [submodule "src/buildroot"]
 	path = src/buildroot
-	url = https://github.com/buildroot/buildroot.git
+	url = https://github.com/PennixRv/buildroot.git
 [submodule "src/edk2"]
 	path = src/edk2
-	url = https://github.com/tianocore/edk2.git
+	url = https://github.com/PennixRv/edk2.git
