@@ -6,10 +6,10 @@
 	url = https://github.com/qemu/qemu.git
 [submodule "src/u-boot"]
 	path = src/u-boot
-	url = https://github.com/u-boot/u-boot.git
+	url = https://github.com/PennixRv/u-boot.git
 [submodule "src/linux"]
 	path = src/linux
-	url = https://github.com/torvalds/linux.git
+	url = https://github.com/PennixRv/linux.git
 [submodule "src/buildroot"]
 	path = src/buildroot
 	url = https://github.com/buildroot/buildroot.git
