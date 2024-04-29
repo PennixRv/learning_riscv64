@@ -16,3 +16,6 @@
 [submodule "src/edk2"]
 	path = src/edk2
 	url = https://github.com/PennixRv/edk2.git
+[submodule "src/edk2-platforms"]
+	path = src/edk2-platforms
+	url = https://github.com/PennixRv/edk2-platforms.git
