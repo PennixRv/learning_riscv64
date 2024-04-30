@@ -15,13 +15,8 @@ pushd ${OPENSBI_DIR}
 git clean -xdf
 popd
 
-pushd ${UBOOT_DIR}
-make qemu-riscv64_smode_defconfig
-make -j`nproc`
-popd
-
 pushd ${OPENSBI_DIR}
-make PLATFORM=generic FW_PAYLOAD_PATH=${UBOOT_DIR}/u-boot.bin
+make PLATFORM=generic
 popd
 
 export OPENSBI=${OPENSBI_DIR}/build/platform/generic/firmware/fw_dynamic.bin
