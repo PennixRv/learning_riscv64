@@ -26,3 +26,7 @@
 	path = src/edk2-platforms
 	url = https://github.com/PennixRv/edk2-platforms.git
 	branch = master
+[submodule "src/meta-riscv"]
+	path = src/meta-riscv
+	url = https://github.com/PennixRv/meta-riscv.git
+    branch = master
