@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "by-gdb",
+            "request": "launch",
+            "name": "Launch(gdb)",
+            "debuggerPath": "riscv64-linux-gnu-gdb",
+            "program": "${workspaceRoot}/src/u-boot/spl/u-boot-spl",
+            "cwd": "${workspaceRoot}",
+            "remote": { 
+            "enabled": true,
+            "address": ":4567",
+            "mode": "remote",
+            "execfile": "${workspaceRoot}/src/u-boot/spl/u-boot-spl"
+        }
+
+        }
+    ]
+}
