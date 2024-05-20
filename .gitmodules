@@ -30,3 +30,6 @@
 	path = src/meta-riscv
 	url = https://github.com/PennixRv/meta-riscv.git
     branch = master
+[submodule "src/meta-sifive"]
+	path = src/meta-sifive
+	url = https://github.com/PennixRv/meta-sifive.git
