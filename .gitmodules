@@ -33,3 +33,6 @@
 [submodule "src/meta-sifive"]
 	path = src/meta-sifive
 	url = https://github.com/PennixRv/meta-sifive.git
+[submodule "src/busybox"]
+	path = src/busybox
+	url = https://github.com/mirror/busybox.git
