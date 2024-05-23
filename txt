@@ -1,0 +1,161 @@
+---
+version: "2.4"
+
+volumes:
+  portainer_data:
+    driver_opts:
+      type: none
+      device: /tmp/zfsv3/nvme12/15718017957/data/docker/portainer
+      o: bind
+
+services:
+  portainer-ce:
+    container_name: portainer-cn
+    environment:
+      HTTP_PROXY: "http://192.167.0.100:7890"
+      HTTPS_PROXY: "http://192.167.0.100:7890"
+    ports:
+      - 9044:9443
+    privileged: true
+    volumes:
+      - portainer_data:/data
+      - /tmp/zfsv3/nvme12/15718017957/data/docker/sslcert:/certs
+      - /var/run/docker.sock:/var/run/docker.sock
+    image: 6053537/portainer-ce
+    command:
+      - --ssl
+      - --sslcert
+      - /certs/portainer.crt
+      - --sslkey 
+      - /certs/portainer.key
+
+---
+version: "2.4"
+
+volumes:
+  portainer_data:
+    driver_opts:
+      type: none
+      device: /tmp/zfsv3/nvme12/15718017957/data/docker/portainer
+      o: bind
+
+services:
+  portainer-ce:
+    container_name: portainer-cn
+    environment:
+      HTTP_PROXY: "http://192.167.0.100:7890"
+      HTTPS_PROXY: "http://192.167.0.100:7890"
+    ports:
+      - 9044:9443
+    privileged: true
+    restart: always
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    image: 6053537/portainer-ce
+
+---
+version: "3.8"
+
+volumes:
+  dockge_data:
+    driver_opts:
+      type: none
+      device: /tmp/zfsv3/nvme12/15718017957/data/docker/dockge/data
+      o: bind
+  dockge_stacks:
+    driver_opts:
+      type: none
+      device: /tmp/zfsv3/nvme12/15718017957/data/docker/dockge/stacks
+      o: bind
+services:
+  dockge:
+    image: louislam/dockge:latest
+    container_name: dockge
+    restart: unless-stopped
+    ports:
+      - 5001:5001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - dockge_data:/app/data
+      - dockge_stacks:/opt/stacks
+    environment:
+      - DOCKGE_STACKS_DIR=/opt/stacks
+
+---
+version: "3.8"
+services:
+  ddnsto:
+    container_name: ddnsto
+    restart: always
+    network_mode: host
+    environment:
+      - TOKEN=e413aca1-ec06-469f-99bf-61954726317b
+      - DEVICE_IDX=0
+      - PUID=0
+      - PGID=0
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /tmp/zfsv3/nvme12/15718017957/data/docker/ddnsto/ddnsto-config:/ddnsto-config
+    image: linkease/ddnsto
+
+
+---
+version: "3.8"
+
+networks:
+  gitea:
+    external: false
+
+volumes:
+  gitea_data:
+    driver_opts:
+      type: none
+      device: /tmp/zfsv3/nvme12/15718017957/data/docker/gitea
+      o: bind
+  mysql_data:
+    driver_opts:
+      type: none
+      device: /tmp/zfsv3/nvme12/15718017957/data/docker/mysql
+      o: bind
+
+services:
+  server:
+    image: gitea/gitea:latest
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=mysql
+      - GITEA__database__HOST=db:3306
+      - GITEA__database__NAME=gitea
+      - GITEA__database__USER=gitea
+      - GITEA__database__PASSWD=gitea
+    restart: always
+    networks:
+      - gitea
+    volumes:
+      - gitea_data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3000:3000"
+      - "222:22"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=gitea
+      - MYSQL_USER=gitea
+      - MYSQL_PASSWORD=gitea
+      - MYSQL_DATABASE=gitea
+    networks:
+      - gitea
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
