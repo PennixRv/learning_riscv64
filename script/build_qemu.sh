@@ -10,6 +10,7 @@ git clean -xdf
     --enable-debug-tcg \
     --enable-debug \
     --enable-debug-info \
+    --enable-slirp \
     -enable-trace-backends=log
 make -j`nproc`
 popd
