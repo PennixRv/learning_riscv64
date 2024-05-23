@@ -12,10 +12,12 @@ services:
   portainer-ce:
     container_name: portainer-cn
     environment:
-      HTTP_PROXY: "http://192.167.0.100:7890"
-      HTTPS_PROXY: "http://192.167.0.100:7890"
+      - HTTP_PROXY=http://192.167.0.100:7890
+      - HTTPS_PROXY=http://192.167.0.100:7890
     ports:
-      - 9044:9443
+      - "9000:9000"
+      - "8000:8000"
+      - "9043:9443"
     privileged: true
     volumes:
       - portainer_data:/data
@@ -55,7 +57,7 @@ services:
     image: 6053537/portainer-ce
 
 ---
-version: "3.8"
+version: "2"
 
 volumes:
   dockge_data:
@@ -72,7 +74,8 @@ services:
   dockge:
     image: louislam/dockge:latest
     container_name: dockge
-    restart: unless-stopped
+    privileged: true
+    restart: always
     ports:
       - 5001:5001
     volumes:
@@ -81,6 +84,8 @@ services:
       - dockge_stacks:/opt/stacks
     environment:
       - DOCKGE_STACKS_DIR=/opt/stacks
+      - HTTP_PROXY=http://192.167.0.100:7890
+      - HTTPS_PROXY=http://192.167.0.100:7890
 
 ---
 version: "3.8"
@@ -159,3 +164,42 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+
+
+version: "3"
+services:
+  gerrit:
+    image: gerritcodereview/gerrit
+    volumes:
+      - /tmp/zfsv3/sata11/15718017957/data/docker/gerrit/git:/var/gerrit/git
+      - /tmp/zfsv3/sata11/15718017957/data/docker/gerrit/index:/var/gerrit/index
+      - /tmp/zfsv3/sata11/15718017957/data/docker/gerrit/cache:/var/gerrit/cache
+      - /tmp/zfsv3/sata11/15718017957/data/docker/gerrit/db:/var/gerrit/db
+      - /tmp/zfsv3/sata11/15718017957/data/docker/gerrit/etc:/var/gerrit/etc
+    ports:
+      - 29418:29418
+      - 8180:8080
+    depends_on:
+      - ldap
+    environment:
+      - CANONICAL_WEB_URL=http://192.168.0.100:8180
+      - HTTP_PROXY=http://192.167.0.100:7890
+      - HTTPS_PROXY=http://192.167.0.100:7890
+    # entrypoint: /entrypoint.sh init
+  ldap:
+    image: osixia/openldap
+    ports:
+      - 389:389
+      - 636:636
+    environment:
+      - LDAP_ADMIN_PASSWORD=secret
+    volumes:
+      - /tmp/zfsv3/sata11/15718017957/data/docker/gerrit/ldap/var:/var/lib/ldap
+      - /tmp/zfsv3/sata11/15718017957/data/docker/gerrit/ldap/etc:/etc/ldap/slapd.d
+  ldap-admin:
+    image: osixia/phpldapadmin
+    ports:
+      - 6443:443
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=ldap
+networks: {}
