@@ -92,6 +92,6 @@ popd
 # 清理之前生成的镜像
 git clean -xdf
 
-genimage --config ${UBOOT_DIR}/board/sifive/unleashed/genimage_spi-nor.cfg --inputpath ${UBOOT_DIR}
+# genimage --config ${UBOOT_DIR}/board/sifive/unleashed/genimage_spi-nor.cfg --inputpath ${UBOOT_DIR}
 
 jq -s 'add' ${UBOOT_DIR}/compile_commands.json ${OPENSBI_DIR}/compile_commands.json > compile_commands.json

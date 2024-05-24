@@ -35,4 +35,4 @@
 	url = https://github.com/PennixRv/meta-sifive.git
 [submodule "src/busybox"]
 	path = src/busybox
-	url = https://github.com/mirror/busybox.git
+	url = https://github.com/PennixRv/busybox.git
