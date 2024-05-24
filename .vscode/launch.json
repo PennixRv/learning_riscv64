@@ -7,6 +7,9 @@
             "name": "Launch(gdb)",
             "debuggerPath": "riscv64-linux-gnu-gdb",
             "program": "${workspaceRoot}/src/u-boot/spl/u-boot-spl",
+            "commandsBeforeExec": [
+                "add-symbol-file ${workspaceRoot}/src/opensbi/build/platform/generic/firmware/fw_dynamic.elf 0x80100000",
+            ],
             "cwd": "${workspaceRoot}",
             "remote": { 
             "enabled": true,

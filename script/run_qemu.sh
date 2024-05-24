@@ -14,18 +14,18 @@ then
 fi
 
 LOG=
-#LOG+="-d in_asm,op,guest_errors,unimp -D ./qemu_log_`date +%Y%m%d%H%M`.log"
+LOG+="-d in_asm,guest_errors,unimp -D ./qemu_log_`date +%Y%m%d%H%M`.log"
 #LOG+="-d guest_errors -D ./qemu_log_`date +%Y%m%d%H%M`.log"
 
 export OPENSBI=${OPENSBI_DIR}/build/platform/generic/firmware/fw_dynamic.bin
 
 ${QEMU_DIR}/build/qemu-system-riscv64 \
     -M virt \
-    -smp 4 \
+    -smp 1 \
     -m 4G \
     -display none \
     -serial stdio \
-    -bios ${UBOOT_DIR}/spl/u-boot-spl.bin \    
+    -bios ${UBOOT_DIR}/spl/u-boot-spl.bin \
     -device loader,file=${UBOOT_DIR}/u-boot.itb,addr=0x80200000 ${GDB} ${LOG}
 
 # boot from sdcard image
