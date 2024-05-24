@@ -4,17 +4,17 @@
 if ! command -v bear &> /dev/null
 then
     echo "bear command could not be found"
-    if [[ -f /etc/os-release ]]; then
+    if [[-f /etc/os-release]]; then
         . /etc/os-release
         case $ID in
             ubuntu|debian)
-                echo "Run 'sudo apt-get install bear' to install bear."
+                echo "Run'sudo apt-get install bear'to install bear."
                 ;;
             centos|fedora|rhel)
-                echo "Run 'sudo yum install bear' to install bear."
+                echo "Run'sudo yum install bear'to install bear."
                 ;;
             arch|manjaro)
-                echo "Run 'sudo pacman -S bear' to install bear."
+                echo "Run'sudo pacman -S bear'to install bear."
                 ;;
             *)
                 echo "Please check your package manager to install bear."
@@ -35,13 +35,13 @@ then
         . /etc/os-release
         case $ID in
             ubuntu|debian)
-                echo "Run 'sudo apt-get install jq' to install jq."
+                echo "Run'sudo apt-get install jq'to install jq."
                 ;;
             centos|fedora|rhel)
-                echo "Run 'sudo yum install jq' to install jq."
+                echo "Run'sudo yum install jq'to install jq."
                 ;;
             arch|manjaro)
-                echo "Run 'sudo pacman -S jq' to install jq."
+                echo "Run'sudo pacman -S jq'to install jq."
                 ;;
             *)
                 echo "Please check your package manager to install jq."
@@ -70,6 +70,9 @@ pushd ${OPENSBI_DIR}
 git clean -xdf
 popd
 
+# dynamic：从上一级 Boot Stage 获取下一级 Boot Stage 的入口信息，以 struct fw_dynamic_info 结构体通过 a2 寄存器传递
+# jump：假设下一级 Boot Stage Entry 为固定地址，直接跳转过去运行
+# payload：在 jump 的基础上，直接打包进来下一级 Boot Stage 的 Binary
 pushd ${OPENSBI_DIR}
 bear -- make PLATFORM=generic PLATFORM_RISCV_XLEN=64
 popd
@@ -82,7 +85,7 @@ export OPENSBI=${OPENSBI_DIR}/build/platform/generic/firmware/fw_dynamic.bin
 # 从配置 CONFIG_SPL_LOAD_FIT_ADDRESS=0x80200000 可知 u-boot-spl.bin 最终将在地址 0x80200000 处解析 FIT 镜像并跳转到 OpenSBI 的地址
 # 在 Qemu 中 通过 -device loader,file=${UBOOT_DIR}/u-boot.itb,addr=0x80200000 参数 将生成的 FIT 镜像加载到指定的位置 0x80200000
 pushd ${UBOOT_DIR}
-make sifive_unleashed_defconfig
+make qemu-riscv64_spl_defconfig
 bear -- make -j`nproc`
 popd
 
