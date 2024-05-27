@@ -9,6 +9,8 @@
             "program": "${workspaceRoot}/src/u-boot/spl/u-boot-spl",
             "commandsBeforeExec": [
                 "add-symbol-file ${workspaceRoot}/src/opensbi/build/platform/generic/firmware/fw_dynamic.elf 0x80100000",
+                "add-symbol-file ${workspaceRoot}/src/u-boot/u-boot 0x81200000",
+                "b board_init_r"
             ],
             "cwd": "${workspaceRoot}",
             "remote": { 

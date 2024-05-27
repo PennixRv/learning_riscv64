@@ -105,7 +105,7 @@ export OPENSBI=${OPENSBI_DIR}/build/platform/generic/firmware/fw_dynamic.bin
 # 从配置 CONFIG_SPL_LOAD_FIT_ADDRESS=0x80200000 可知 u-boot-spl.bin 最终将在地址 0x80200000 处解析 FIT 镜像并跳转到 OpenSBI 的地址
 # 在 Qemu 中 通过 -device loader,file=${UBOOT_DIR}/u-boot.itb,addr=0x80200000 参数 将生成的 FIT 镜像加载到指定的位置 0x80200000
 pushd ${UBOOT_DIR}
-make sifive_unleashed_defconfig
+make qemu-riscv64_spl_defconfig
 
 # 将编译产物优化等级调整为 DEBUG
 if [ $DEBUG -eq 1 ]; then
@@ -115,8 +115,8 @@ fi
 bear -- make -j`nproc`
 popd
 
-cp ${UBOOT_DIR}/board/sifive/unleashed/genimage_spi-nor.cfg .
-sed -i 's|u-boot-spl.bin|spl/u-boot-spl.bin|g' ./genimage_spi-nor.cfg
-genimage --config ./genimage_spi-nor.cfg --inputpath ${UBOOT_DIR}
+# cp ${UBOOT_DIR}/board/sifive/unleashed/genimage_spi-nor.cfg .
+# sed -i 's|u-boot-spl.bin|spl/u-boot-spl.bin|g' ./genimage_spi-nor.cfg
+# genimage --config ./genimage_spi-nor.cfg --inputpath ${UBOOT_DIR}
 
-jq -s 'add' ${UBOOT_DIR}/compile_commands.json ${OPENSBI_DIR}/compile_commands.json > compile_commands.json
+# jq -s 'add' ${UBOOT_DIR}/compile_commands.json ${OPENSBI_DIR}/compile_commands.json > compile_commands.json

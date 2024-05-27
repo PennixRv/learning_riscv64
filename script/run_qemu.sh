@@ -14,7 +14,7 @@ then
 fi
 
 LOG=
-LOG+="-d in_asm,guest_errors,unimp -D ./qemu_log_`date +%Y%m%d%H%M`.log"
+# LOG+="-d in_asm,guest_errors,unimp -D ./qemu_log_`date +%Y%m%d%H%M`.log"
 #LOG+="-d guest_errors -D ./qemu_log_`date +%Y%m%d%H%M`.log"
 
 export OPENSBI=${OPENSBI_DIR}/build/platform/generic/firmware/fw_dynamic.bin
