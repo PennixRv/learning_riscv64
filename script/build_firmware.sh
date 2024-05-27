@@ -70,11 +70,31 @@ pushd ${OPENSBI_DIR}
 git clean -xdf
 popd
 
+DEBUG=1
+
+while getopts "d" opt; do
+  case $opt in
+    d)
+      DEBUG=0
+      ;;
+    *)
+      echo "Usage: $0 [-d]"
+      echo "  -d  Disable debug mode"
+      exit 1
+      ;;
+  esac
+done
+
 # dynamic: 从上一级 Boot Stage 获取下一级 Boot Stage 的入口信息, 以 struct fw_dynamic_info 结构体通过 a2 寄存器传递
 # jump: 假设下一级 Boot Stage Entry 为固定地址, 直接跳转过去运行
 # payload: 在 jump 的基础上, 直接打包进来下一级 Boot Stage 的 Binary
 pushd ${OPENSBI_DIR}
-bear -- make PLATFORM=generic PLATFORM_RISCV_XLEN=64 DEBUG=1
+if [ $DEBUG -eq 1 ]; then
+  bear -- make PLATFORM=generic PLATFORM_RISCV_XLEN=64 DEBUG=1
+else
+  bear -- make PLATFORM=generic PLATFORM_RISCV_XLEN=64
+fi
+popd
 popd
 
 # 用于在构建 U-boot 时 将 fw_dynamic.bin 固件打包进包含 u-boot.bin 的 FIT 镜像中
@@ -85,17 +105,18 @@ export OPENSBI=${OPENSBI_DIR}/build/platform/generic/firmware/fw_dynamic.bin
 # 从配置 CONFIG_SPL_LOAD_FIT_ADDRESS=0x80200000 可知 u-boot-spl.bin 最终将在地址 0x80200000 处解析 FIT 镜像并跳转到 OpenSBI 的地址
 # 在 Qemu 中 通过 -device loader,file=${UBOOT_DIR}/u-boot.itb,addr=0x80200000 参数 将生成的 FIT 镜像加载到指定的位置 0x80200000
 pushd ${UBOOT_DIR}
-make qemu-riscv64_spl_defconfig
+make sifive_unleashed_defconfig
 
 # 将编译产物优化等级调整为 DEBUG
-sed -i 's/CONFIG_CC_OPTIMIZE_FOR_SIZE=y/# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set/g' .config
-sed -i 's/# CONFIG_CC_OPTIMIZE_FOR_DEBUG is not set/CONFIG_CC_OPTIMIZE_FOR_DEBUG=y/g' .config
+if [ $DEBUG -eq 1 ]; then
+  sed -i 's/CONFIG_CC_OPTIMIZE_FOR_SIZE=y/# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set/g' .config
+  sed -i 's/# CONFIG_CC_OPTIMIZE_FOR_DEBUG is not set/CONFIG_CC_OPTIMIZE_FOR_DEBUG=y/g' .config
+fi
 bear -- make -j`nproc`
 popd
 
-# 清理之前生成的镜像
-# git clean -xdf
-
-# genimage --config ${UBOOT_DIR}/board/sifive/unleashed/genimage_spi-nor.cfg --inputpath ${UBOOT_DIR}
+cp ${UBOOT_DIR}/board/sifive/unleashed/genimage_spi-nor.cfg .
+sed -i 's|u-boot-spl.bin|spl/u-boot-spl.bin|g' ./genimage_spi-nor.cfg
+genimage --config ./genimage_spi-nor.cfg --inputpath ${UBOOT_DIR}
 
 jq -s 'add' ${UBOOT_DIR}/compile_commands.json ${OPENSBI_DIR}/compile_commands.json > compile_commands.json
